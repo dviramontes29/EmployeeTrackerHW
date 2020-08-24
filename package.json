@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/dviramontes29/EmployeeTrackerHW#readme",
   "dependencies": {
-    "inquirer": "^7.3.3"
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql2": "^2.1.0"
   }
 }
