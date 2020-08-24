@@ -1,0 +1,24 @@
+{
+  "name": "EmployeeTrackerHW",
+  "version": "1.0.0",
+  "description": "node / inquirer npm / MySQL",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dviramontes29/EmployeeTrackerHW.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dviramontes29/EmployeeTrackerHW/issues"
+  },
+  "homepage": "https://github.com/dviramontes29/EmployeeTrackerHW#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3"
+  }
+}
