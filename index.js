@@ -20,7 +20,7 @@ const mainMenu = () => {
           value: 'addEmployee'
         },
         {
-          name: `Update An Employee's Role`,
+          name: 'Update Employee Role',
           value: 'updateEmployeeRole'
         },
         {
@@ -98,13 +98,13 @@ const addEmployee = () => {
       value: role.id
     }))
 
-    db.query('SELECT * FROM employee', (err, employees) => {
+    db.query('SELECT * FROM employee', (_err, employees) => {
 
       employees = employees.map(employee => ({
         name: `${employee.first_name} ${employee.last_name}`,
         value: employee.id
       }))
-      
+
       employees.unshift({ name: 'None', value: null })
 
       prompt([
@@ -144,23 +144,154 @@ const addEmployee = () => {
 }
 
 const updateEmployeeRole = () => {
+  db.query('SELECT * FROM employees', (_err, employees) => {
+    employees = employees.map(employees => ({
+      name: `${employees.first_name} ${employees.last_name}`,
+      value: employees.id
+    }))
+    db.query('SELECT * FROM roles', (_err, roles) => {
+      roles = roles.map(roles => ({
+        name: roles.title,
+        value: roles.id
+      }))
+      prompt([
+        {
+          type: 'list',
+          name: 'employees_id',
+          message: 'Choose an employee to update',
+          choices: employees
+        },
+        {
+          type: 'list',
+          name: 'role_id',
+          message: 'Choose the employee new role',
+          choices: roles
+        },
+      ])
+        .then(employees => {
+          console.log(employees.role_id)
+          db.query('UPDATE employees SET role_id = ? WHERE employees.id = ?', [employees.role_id, employees.employees_id], (err) => {
+            if (err) { console.log(err) }
+            console.log('employee updated')
+            start()
+          })
+        })
+        .catch(err => { console.log(err) })
+    })
+  })
+}
 
+const updateEmployeeManager = () => {
+  db.query('SELECT * FROM employees', (_err, employees) => {
+    employees = employees.map(employees => ({
+      name: `${employees.first_name} ${employees.last_name}`,
+      value: employees.id
+    }))
+    db.query('SELECT * FROM roles', (_err, roles) => {
+      roles = roles.map(roles => ({
+        name: roles.title,
+        value: roles.id
+      }))
+      prompt([
+        {
+          type: 'list',
+          name: 'employees_id',
+          message: 'Choose an employee to update',
+          choices: employees
+        },
+        {
+          type: 'list',
+          name: 'role_id',
+          message: 'Choose the employee new role',
+          choices: roles
+        },
+      ])
+        .then(employees => {
+          console.log(employees.role_id)
+          db.query('UPDATE employees SET role_id = ? WHERE employees.id = ?', [employees.role_id, employees.employee_id], (err) => {
+            if (err) { console.log(err) }
+            console.log('employee updated')
+            mainMenu()
+          })
+        })
+        .catch(err => { console.log(err) })
+    })
+  })
 }
 
 const viewDepartments = () => {
-
+  db.query(`
+    SELECT * FROM departments
+  `, (err, departments) => {
+    if (err) { console.log(err) }
+    console.table(departments)
+    mainMenu()
+  })
 }
-
 const addDepartment = () => {
-
+  prompt({
+    type: 'input',
+    name: 'name',
+    message: 'What is the name of the department?'
+  })
+    .then(departments => {
+      db.query('INSERT INTO departments SET ?', departments, (err) => {
+        if (err) { console.log(err) }
+        console.log('Department Created!')
+        mainMenu()
+      })
+    })
 }
-
 const viewRoles = () => {
-
+  db.query(`
+    SELECT roles.title, roles.salary FROM roles
+  `, (err, roles) => {
+    if (err) { console.log(err) }
+    console.table(roles)
+    mainMenu()
+  })
 }
-
 const addRole = () => {
-
+  db.query('SELECT * FROM departments', (err, departments) => {
+    if (err) { console.log(err) }
+    departments = departments.map(departments => ({
+      name: departments.name,
+      value: departments.id
+    }))
+    db.query('SELECT * FROM roles', (_err, roles) => {
+      roles = roles.map(roles => ({
+        name: `${roles.title} ${roles.salary}`,
+        value: roles.id
+      }))
+      roles.unshift({ name: 'None', value: null })
+      prompt([
+        {
+          type: 'input',
+          name: 'title',
+          message: 'What is the title of the role?'
+        },
+        {
+          type: 'input',
+          name: 'salary',
+          message: 'What is the salary?'
+        },
+        {
+          type: 'list',
+          name: 'department_id',
+          message: 'choose department:',
+          choices: departments
+        }
+      ])
+        .then(roles => {
+          db.query('INSERT INTO roles SET ?', roles, (err) => {
+            if (err) { console.log(err) }
+            console.log('Role Created!')
+            mainMenu()
+          })
+        })
+        .catch(err => console.log(err))
+    })
+  })
 }
 
 mainMenu()
